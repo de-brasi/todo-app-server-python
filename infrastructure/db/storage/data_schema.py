@@ -4,6 +4,8 @@ CSV_DATA_SCHEME = [
     FieldDescription('task_id', int),
     FieldDescription('description', str),
     FieldDescription('group', str),
-    FieldDescription('important', lambda x: True if x == 'true' else False),
-    FieldDescription('done', lambda x: True if x == 'true' else False)
+    FieldDescription('important',
+                     lambda x: True if x == 'true' or x == 'true\n' else False),
+    FieldDescription('done',
+                     lambda x: True if x == 'true' or x == 'true\n' else False)
 ]
