@@ -25,6 +25,7 @@ def task_entity_to_todo_task_mapper(arg: dict) -> TodoTask:
     )
 
 
+# TODO: нужен класс чтобы в конструкторе передать реализацию интерфейса TasksRepository
 def get_tasks_from_db(storage: TasksRepository) -> str:
     tasks = storage.get_tasks()
     print("got tasks from db:", tasks)
