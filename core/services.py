@@ -1,3 +1,4 @@
+import sys
 import json
 
 from core.entities import TodoTask
@@ -31,7 +32,6 @@ class MainService:
 
     def get_tasks_from_db(self) -> str:
         tasks = self.storage.get_tasks()
-        print("got tasks from db:", tasks)
         tasks_as_dicts = []
         for todo in tasks:
             tasks_as_dicts.append(MainService.task_entity_to_dict_mapper(todo))
@@ -48,12 +48,12 @@ class MainService:
                 assert isinstance(todo, dict)
                 tasks_as_entity.append(MainService.task_entity_to_todo_task_mapper(todo))
 
-            print("got tasks from client:", tasks_as_entity)
+            sys.stderr.write("got tasks from client:" + str(tasks_as_entity) + '\n')
 
             self.storage.save_tasks(tasks_as_entity)
         except json.JSONDecodeError:
-            print("decoding error when decode string:", to_save)
+            sys.stderr.write("decoding error when decode string:" + str(to_save) + '\n')
             raise RuntimeError("internal error")
         except AssertionError:
-            print("assertion error when decode string:", to_save, "; expected encoded list od dicts")
+            sys.stderr.write("assertion error when decode string:" + str(to_save) + "; expected encoded list od dicts\n")
             raise RuntimeError("internal error")
