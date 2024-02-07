@@ -51,7 +51,7 @@ class MainService:
             print("got tasks from client:", tasks_as_entity)
 
             self.storage.save_tasks(tasks_as_entity)
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             print("decoding error when decode string:", to_save)
             raise RuntimeError("internal error")
         except AssertionError:
