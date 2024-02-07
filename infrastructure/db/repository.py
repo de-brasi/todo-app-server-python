@@ -16,6 +16,10 @@ STORAGE_FILE_PATH = os.path.dirname(__file__) + '/storage/data.csv'
 
 
 class TasksRepositoryCSV(TasksRepository):
+    # todo:
+    #  1) make closable for using in with-context;
+    #  2) new layer for file's content manager (read from file, rstrip, etc.)
+
     def get_tasks(self) -> List[TodoTask]:
         tasks = []
 
@@ -29,12 +33,19 @@ class TasksRepositoryCSV(TasksRepository):
         return tasks
 
     def save_tasks(self, tasks_to_store: List[TodoTask]) -> None:
-        # todo: TodoTask[] -> CSVEntity[] -> csv file
-        # todo: определиться с тем как записывать типы bool
-        pass
+        with open(STORAGE_FILE_PATH, 'w') as storage_csv_file:
+            for record in tasks_to_store:
+                csv_entity = to_db_entity(record, CSV_DATA_SCHEME)
+                storage_csv_file.write(csv_entity.data)
 
 
+# todo: for debug
 example = TasksRepositoryCSV()
 res = example.get_tasks()
 for i in res:
-    print(i)
+    print('todo task', i)
+    print('rollback to TodoTaskCSVEntity', to_db_entity(i, CSV_DATA_SCHEME))
+
+# 1,drink coffee,default,False,False
+# 2,drink tea,default,True,True
+# 3,drink beer,default,True,False
