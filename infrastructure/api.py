@@ -11,6 +11,11 @@ from http.server import HTTPServer
 
 
 class HttpHandler(BaseHTTPRequestHandler):
+    def __init__(self, request, client_address, server):
+        # TODO: избавиться от многократных вызовов конструктора
+        super().__init__(request, client_address, server)
+        print('HttpHandler created')
+
     @staticmethod
     def parse_querystring_args(url: str) -> Dict:
         parse_result = urlparse(url)
