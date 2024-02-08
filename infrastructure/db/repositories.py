@@ -39,13 +39,14 @@ class TasksRepositoryCSV(TasksRepository):
                 storage_csv_file.write(csv_entity.data)
 
 
-# todo: for debug
-example = TasksRepositoryCSV()
-res = example.get_tasks()
-for i in res:
-    print('todo task', i)
-    print('rollback to TodoTaskCSVEntity', to_db_entity(i, CSV_DATA_SCHEME))
+if __name__ == "__main__":
+    # todo: for debug
+    example = TasksRepositoryCSV()
+    res = example.get_tasks()
+    for i in res:
+        print('todo task', i)
+        print('rollback to TodoTaskCSVEntity', to_db_entity(i, CSV_DATA_SCHEME))
 
-# 1,drink coffee,default,False,False
-# 2,drink tea,default,True,True
-# 3,drink beer,default,True,False
+    # 1,drink coffee,default,False,False
+    # 2,drink tea,default,True,True
+    # 3,drink beer,default,True,False
