@@ -36,7 +36,7 @@ class TasksRepositoryCSV(TasksRepository):
         with open(STORAGE_FILE_PATH, 'w') as storage_csv_file:
             for record in tasks_to_store:
                 csv_entity = to_db_entity(record, CSV_DATA_SCHEME)
-                storage_csv_file.write(csv_entity.data)
+                storage_csv_file.write(csv_entity.data + '\n')
 
 
 if __name__ == "__main__":
