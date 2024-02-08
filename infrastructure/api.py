@@ -1,4 +1,3 @@
-import json
 import threading
 
 from typing import Dict
@@ -9,12 +8,14 @@ from urllib.parse import parse_qs
 from http.server import BaseHTTPRequestHandler
 from http.server import HTTPServer
 
+from core.services import MainService
+from infrastructure.db.repositories import TasksRepositoryCSV
+
 
 class HttpHandler(BaseHTTPRequestHandler):
     def __init__(self, request, client_address, server):
-        # TODO: избавиться от многократных вызовов конструктора
+        self.main_service = MainService(TasksRepositoryCSV())
         super().__init__(request, client_address, server)
-        print('HttpHandler created')
 
     @staticmethod
     def parse_querystring_args(url: str) -> Dict:
@@ -48,11 +49,7 @@ class HttpHandler(BaseHTTPRequestHandler):
         if self.path.startswith("/get-tasks"):
             print('Request path is:', self.path)
 
-            response_data = {
-                "example key": "example value",
-                "example int key": 123
-            }
-            response_data_json = json.dumps(response_data)
+            response_data_json = self.main_service.get_tasks_from_db()
             self.set_response(200,
                               "application/json",
                               "*",
@@ -70,25 +67,42 @@ class HttpHandler(BaseHTTPRequestHandler):
         request_querystring_args = HttpHandler.parse_querystring_args(requested_url)
         request_body_args = HttpHandler.parse_query_params(requested_url)
 
+        # todo: debug only
+        print("url:", requested_url)
+        print("endpoint:", requested_endpoint)
+        print("querystring args:", request_querystring_args)
+        print("body args:", request_body_args)
+
         if requested_endpoint.startswith('/add-task'):
-            response_data = {
-                "test POST request status": "handled",
-                "got data": request_querystring_args
-            }
-            response_data_json = json.dumps(response_data)
+            # todo: надо ли что-то отвечать на это?
+            # todo: надо распарсить нужные поля согласно
 
+            # TODO:
+            #  написать документирующий комментарий,
+            #  что ожидаются запросы в формате ..url../?tasks=[<json string:>{},{},{}]
+
+            querystring_field_name_for_tasks = 'tasks'
+            tasks_index = 0
+
+            try:
+                self.main_service.save_tasks_to_db(
+                    request_querystring_args[querystring_field_name_for_tasks][tasks_index])
+
+                self.set_response(200,
+                                  "text/plain",
+                                  "*",
+                                  "Saved success")
+            except ...:
+                self.set_response(500,
+                                  "text/plain",
+                                  "*",
+                                  "Error occurred when handling request")
+
+        elif requested_endpoint.startswith('/terminate') or requested_endpoint.startswith('/shutdown'):
             self.set_response(200,
-                              "application/json",
+                              "text/plain",
                               "*",
-                              response_data_json)
-
-        elif requested_endpoint.startswith('/add-task') or requested_endpoint.startswith('/shutdown'):
-            self.send_response(200)
-            self.send_header("Content-type", "text/plain")
-            self.send_header("Access-Control-Allow-Origin", "*")
-            self.end_headers()
-
-            self.wfile.write("Server shutting down...".encode())
+                              "Server shutting down...")
 
             threading.Thread(target=self.shutdown_server).start()
         else:
