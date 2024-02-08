@@ -12,8 +12,8 @@ class MainService:
     @staticmethod
     def task_entity_to_dict_mapper(arg: TodoTask) -> dict:
         res = {
-            'task_id': arg.task_id,
-            'description': arg.description,
+            'id': arg.id,
+            'label': arg.label,
             'group': arg.group,
             'important': arg.important,
             'done': arg.done
@@ -23,8 +23,8 @@ class MainService:
     @staticmethod
     def task_entity_to_todo_task_mapper(arg: dict) -> TodoTask:
         return TodoTask(
-            task_id=arg['task_id'],
-            description=arg['description'],
+            id=arg['id'],
+            label=arg['label'],
             group=arg['group'],
             important=arg['important'],
             done=arg['done']
@@ -48,8 +48,7 @@ class MainService:
                 assert isinstance(todo, dict)
                 tasks_as_entity.append(MainService.task_entity_to_todo_task_mapper(todo))
 
-            sys.stderr.write("got tasks from client:" + str(tasks_as_entity) + '\n')
-
+            print("got tasks from client:" + str(tasks_as_entity) + '\n')
             self.storage.save_tasks(tasks_as_entity)
         except json.JSONDecodeError:
             sys.stderr.write("decoding error when decode string:" + str(to_save) + '\n')
