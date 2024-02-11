@@ -74,13 +74,6 @@ class HttpHandler(BaseHTTPRequestHandler):
         print("body args:", request_body_args)
 
         if requested_endpoint.startswith('/add-task'):
-            # todo: надо ли что-то отвечать на это?
-            # todo: надо распарсить нужные поля согласно
-
-            # TODO:
-            #  написать документирующий комментарий,
-            #  что ожидаются запросы в формате ..url../?tasks=[<json string:>{},{},{}]
-
             querystring_field_name_for_tasks = 'tasks'
             tasks_index = 0
 
