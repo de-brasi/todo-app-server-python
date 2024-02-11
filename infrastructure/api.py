@@ -85,6 +85,12 @@ class HttpHandler(BaseHTTPRequestHandler):
             tasks_index = 0
 
             try:
+                print(
+                    f"Got query string with python type"
+                    f"{type(request_querystring_args[querystring_field_name_for_tasks][tasks_index])}:",
+                    request_querystring_args[querystring_field_name_for_tasks][tasks_index]
+                )
+
                 self.main_service.save_tasks_to_db(
                     request_querystring_args[querystring_field_name_for_tasks][tasks_index])
 
